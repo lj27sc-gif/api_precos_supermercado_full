@@ -1,7 +1,4 @@
 services:
-  # ==========================
-  # BACKEND DJANGO API
-  # ==========================
   - type: web
     name: price-backend
     env: docker
@@ -47,9 +44,6 @@ services:
         value: dev-api-key
     healthCheckPath: /api/docs/
 
-  # ==========================
-  # ML SERVICE (FASTAPI)
-  # ==========================
   - type: web
     name: price-ml-service
     env: docker
@@ -67,9 +61,6 @@ services:
       - key: TEMP_DIR
         value: /tmp/price_api_temp
 
-  # ==========================
-  # CONSUMER (BACKGROUND WORKER)
-  # ==========================
   - type: worker
     name: price-consumer
     env: docker
@@ -93,9 +84,6 @@ services:
       - key: TEMP_DIR
         value: /tmp/price_api_temp
 
-# ==========================
-# DATABASES E CACHE
-# ==========================
 databases:
   - name: price-db
     plan: free
