@@ -9,3 +9,4 @@ aiokafka
 fastapi
 uvicorn
 pydantic
+main
