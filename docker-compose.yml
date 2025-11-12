@@ -1,0 +1,84 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: price_db
+      POSTGRES_USER: price_user
+      POSTGRES_PASSWORD: price_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - price-net
+
+  redis:
+    image: redis:7
+    networks:
+      - price-net
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - price-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    ports:
+      - 9092:9092
+    networks:
+      - price-net
+
+  backend:
+    build: ./backend
+    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://price_user:price_pass@db:5432/price_db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+    networks:
+      - price-net
+
+  ml_service:
+    build: ./ml_service
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+    volumes:
+      - ./ml_service:/app
+    ports:
+      - "8001:8001"
+    networks:
+      - price-net
+
+  consumer:
+    build: ./consumers
+    command: python kafka_consumer.py
+    volumes:
+      - ./consumers:/app
+    depends_on:
+      - kafka
+      - db
+    networks:
+      - price-net
+
+volumes:
+  pgdata:
+
+networks:
+  price-net:
+    driver: bridge

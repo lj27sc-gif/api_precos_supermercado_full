@@ -1,0 +1,92 @@
+services:
+  - type: web
+    name: price-backend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    autoDeploy: true
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      python backend/manage.py collectstatic --noinput || true
+    startCommand: |
+      python backend/manage.py migrate --noinput && python backend/manage.py runserver 0.0.0.0:8000
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: price_project.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "True"
+      - key: POSTGRES_DB
+        value: price_db
+      - key: POSTGRES_USER
+        value: price_user
+      - key: POSTGRES_PASSWORD
+        value: price_pass
+      - key: DATABASE_URL
+        fromDatabase:
+          name: price-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: price-redis
+          type: redis
+          property: connectionString
+      - key: OPEN_SOURCES
+        value: '["api_partner","sftp_feed"]'
+      - key: EXIT_TARGETS
+        value: '["api_clients","webhooks"]'
+      - key: TEMP_DIR
+        value: /tmp/price_api_temp
+      - key: X_API_KEY
+        value: dev-api-key
+    healthCheckPath: /api/health/
+
+  - type: web
+    name: price-ml-service
+    env: docker
+    plan: free
+    dockerfilePath: ./ml_service/Dockerfile
+    autoDeploy: true
+    buildCommand: |
+      pip install -r ml_service/requirements.txt
+    startCommand: |
+      uvicorn main:app --host 0.0.0.0 --port 8001
+    envVars:
+      - key: MODEL_PATH
+        value: /app/temp/model.pkl
+      - key: TEMP_DIR
+        value: /tmp/price_api_temp
+
+  - type: worker
+    name: price-consumer
+    env: docker
+    plan: free
+    dockerfilePath: ./consumers/Dockerfile
+    autoDeploy: true
+    buildCommand: |
+      pip install -r consumers/requirements.txt
+    startCommand: |
+      python kafka_consumer.py
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: price_project.settings
+      - key: DATABASE_URL
+        fromDatabase:
+          name: price-db
+          property: connectionString
+      - key: KAFKA_BOOTSTRAP
+        value: none
+      - key: TEMP_DIR
+        value: /tmp/price_api_temp
+
+databases:
+  - name: price-db
+    plan: free
+    databaseName: price_db
+    user: price_user
+
+  - type: redis
+    name: price-redis
+    plan: free

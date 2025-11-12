@@ -1,0 +1,11 @@
+Django>=4.2
+djangorestframework
+django-filter
+drf-spectacular
+psycopg2-binary
+redis
+celery
+aiokafka
+fastapi
+uvicorn
+pydantic
