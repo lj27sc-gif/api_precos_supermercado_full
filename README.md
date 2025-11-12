@@ -1,3 +1,7 @@
+
+Statos : Em desenvolvimento 
+
+
 # Price API Platform - Starter Repository
 
 This repository contains a starter template for a price-collection and price-query platform:
