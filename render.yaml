@@ -57,7 +57,7 @@ services:
       uvicorn ml_service.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MODEL_PATH
-        value: /app/ml_service/temp/model.pkl
+        value: /tmp/model.pkl
       - key: TEMP_DIR
         value: /tmp/price_api_temp
 
