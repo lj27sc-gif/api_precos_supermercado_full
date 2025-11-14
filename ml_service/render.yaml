@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: price-ml-service
+    env: docker
+    plan: free
+    dockerfilePath: ./ml_service/Dockerfile
+    buildContext: .
+    autoDeploy: true
+    buildCommand: |
+      pip install -r ml_service/requirements.txt
+    startCommand: |
+      uvicorn ml_service.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MODEL_PATH
+        value: /tmp/ml_model/model.pkl
+      - key: TEMP_DIR
+        value: /tmp/price_api_temp
+
+databases:
+  - name: price-db
+    plan: free
