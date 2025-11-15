@@ -4,3 +4,4 @@ scikit-learn
 numpy
 pydantic
 requests
+ml_service
