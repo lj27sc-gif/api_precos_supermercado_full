@@ -1,0 +1,72 @@
+body {
+  background-color: #f9fafb;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.titulo {
+  font-weight: 800;
+  font-size: 38px;
+  color: #117A65;
+  text-align: center;
+  margin-top: 15px;
+}
+.subtitulo {
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 25px;
+}
+.upload-box {
+  border: 2px dashed #117A65;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #145A32;
+  margin-bottom: 30px;
+}
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.kpi-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+  width: 250px;
+  padding: 15px;
+  transition: 0.3s;
+}
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+.kpi-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+.kpi-title {
+  color: gray;
+  font-weight: 600;
+  font-size: 15px;
+}
+.kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+}
+.graficos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 25px;
+}

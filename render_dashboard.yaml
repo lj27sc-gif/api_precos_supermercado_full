@@ -1,9 +1,10 @@
 services:
   - type: web
-    name: dashboard-supermercado
+    name: dashboard-service
     runtime: python
     plan: free
     buildCommand: |
+      pip install --upgrade pip
       pip install -r requirements.txt
     startCommand: |
-      python dashboard_final_v8_pro_plus_css_v8.py
+      python dashboard/dashboard_final_v8_pro_plus_css_v8.py
