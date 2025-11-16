@@ -1,5 +1,7 @@
-fastapi
-uvicorn
-scikit-learn
-pydantic
+dash
+dash-bootstrap-components
+pandas
+plotly
 numpy
+openpyxl
+gunicorn
